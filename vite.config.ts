@@ -80,7 +80,7 @@ export default defineConfig(({ mode }) => {
       // TESTE DE DEPURACÃO: Adicionando o host diretamente como uma string
       // =================================================================
       allowedHosts: [
-        'bolt-bolt.lenwap.easypanel.host',
+        'bolt.streamingplay.site',
       ],
     },
     // O restante da configuração permanece o mesmo
