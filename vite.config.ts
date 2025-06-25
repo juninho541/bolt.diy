@@ -72,28 +72,16 @@ const pkg = getPackageJson();
 const gitInfo = getGitInfo();
 
 // AQUI COMEÇA A CONFIGURAÇÃO PRINCIPAL DO VITE
-export default defineConfig(({ mode }) => { // Alterado para usar o 'mode'
-  // Carrega as variáveis de ambiente do sistema (ex: .env)
-  // Isso é crucial para acessar process.env.DOMAIN que o EasyPanel fornece
+export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    // =================================================================
-    // ADIÇÃO CRÍTICA PARA RESOLVER O PROBLEMA DE ACESSO NO DOCKER
-    // =================================================================
     server: {
-      // Faz o servidor escutar em todas as interfaces de rede (0.0.0.0),
-      // o que é essencial para que o proxy do EasyPanel possa se conectar a ele.
       host: true,
-      // Lista de domínios permitidos. Estamos dizendo ao Vite para confiar
-      // no domínio que o EasyPanel configura automaticamente na variável 'DOMAIN'.
       allowedHosts: [
         env.DOMAIN,
       ],
     },
-    // =================================================================
-    // O RESTANTE DA SUA CONFIGURAÇÃO ORIGINAL
-    // =================================================================
     define: {
       __COMMIT_HASH: JSON.stringify(gitInfo.commitHash),
       __GIT_BRANCH: JSON.stringify(gitInfo.branch),
@@ -101,7 +89,8 @@ export default defineConfig(({ mode }) => { // Alterado para usar o 'mode'
       __GIT_AUTHOR: JSON.stringify(gitInfo.author),
       __GIT_EMAIL: JSON.stringify(gitInfo.email),
       __GIT_REMOTE_URL: JSON.stringify(gitInfo.remoteUrl),
-      __GIT_REPO_NAME: JSON.stringify(giInfo.repoName),
+      // LINHA CORRIGIDA ABAIXO
+      __GIT_REPO_NAME: JSON.stringify(gitInfo.repoName),
       __APP_VERSION: JSON.stringify(process.env.npm_package_version),
       __PKG_NAME: JSON.stringify(pkg.name),
       __PKG_DESCRIPTION: JSON.stringify(pkg.description),
@@ -110,7 +99,7 @@ export default defineConfig(({ mode }) => { // Alterado para usar o 'mode'
       __PKG_DEV_DEPENDENCIES: JSON.stringify(pkg.devDependencies),
       __PKG_PEER_DEPENDENCIES: JSON.stringify(pkg.peerDependencies),
       __PKG_OPTIONAL_DEPENDENCIES: JSON.stringify(pkg.optionalDependencies),
-      'process.env.NODE_ENV': JSON.stringify(mode), // Usando o 'mode' do Vite
+      'process.env.NODE_ENV': JSON.stringify(mode),
     },
     build: {
       target: 'esnext',
