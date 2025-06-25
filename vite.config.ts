@@ -71,16 +71,18 @@ const getPackageJson = () => {
 const pkg = getPackageJson();
 const gitInfo = getGitInfo();
 
-// AQUI COMEÇA A CONFIGURAÇÃO PRINCIPAL DO VITE
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
     server: {
       host: true,
-      allowedHosts: [
-        env.DOMAIN,
-      ],
+      // =================================================================
+      // ALTERAÇÃO FINAL E CORRETA
+      // Isso garante que se env.DOMAIN for undefined, a lista ficará vazia [],
+      // evitando o crash do Vite.
+      // =================================================================
+      allowedHosts: [env.DOMAIN].filter(Boolean),
     },
     define: {
       __COMMIT_HASH: JSON.stringify(gitInfo.commitHash),
@@ -88,8 +90,6 @@ export default defineConfig(({ mode }) => {
       __GIT_COMMIT_TIME: JSON.stringify(gitInfo.commitTime),
       __GIT_AUTHOR: JSON.stringify(gitInfo.author),
       __GIT_EMAIL: JSON.stringify(gitInfo.email),
-      __GIT_REMOTE_URL: JSON.stringify(gitInfo.remoteUrl),
-      // LINHA CORRIGIDA ABAIXO
       __GIT_REPO_NAME: JSON.stringify(gitInfo.repoName),
       __APP_VERSION: JSON.stringify(process.env.npm_package_version),
       __PKG_NAME: JSON.stringify(pkg.name),
