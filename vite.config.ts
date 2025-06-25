@@ -1,6 +1,6 @@
 import { cloudflareDevProxyVitePlugin as remixCloudflareDevProxy, vitePlugin as remixVitePlugin } from '@remix-run/dev';
 import UnoCSS from 'unocss/vite';
-import { defineConfig, loadEnv, type ViteDevServer } from 'vite';
+import { defineConfig, type ViteDevServer } from 'vite'; // Removido loadEnv pois não será usado neste teste
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { optimizeCssModules } from 'vite-plugin-optimize-css-modules';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -11,7 +11,7 @@ import { join } from 'path';
 
 dotenv.config();
 
-// Get detailed git info with fallbacks
+// ... (Todo o código getGitInfo e getPackageJson permanece exatamente o mesmo) ...
 const getGitInfo = () => {
   try {
     return {
@@ -40,7 +40,6 @@ const getGitInfo = () => {
   }
 };
 
-// Read package.json with detailed dependency info
 const getPackageJson = () => {
   try {
     const pkgPath = join(process.cwd(), 'package.json');
@@ -68,22 +67,23 @@ const getPackageJson = () => {
   }
 };
 
+
 const pkg = getPackageJson();
 const gitInfo = getGitInfo();
 
+// AQUI COMEÇA A CONFIGURAÇÃO PRINCIPAL DO VITE
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
-
   return {
     server: {
       host: true,
       // =================================================================
-      // ALTERAÇÃO FINAL E CORRETA
-      // Isso garante que se env.DOMAIN for undefined, a lista ficará vazia [],
-      // evitando o crash do Vite.
+      // TESTE DE DEPURACÃO: Adicionando o host diretamente como uma string
       // =================================================================
-      allowedHosts: [env.DOMAIN].filter(Boolean),
+      allowedHosts: [
+        'bolt-bolt.lenwap.easypanel.host',
+      ],
     },
+    // O restante da configuração permanece o mesmo
     define: {
       __COMMIT_HASH: JSON.stringify(gitInfo.commitHash),
       __GIT_BRANCH: JSON.stringify(gitInfo.branch),
